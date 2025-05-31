@@ -145,95 +145,10 @@ impl Kidz {
         Ok(files)
     }
 
-    fn read_files(
-        entries: &[HedEntry],
-        file: &File,
-        filetype: &KidzFileType,
-    ) -> Result<Vec<KidzFile>, crate::error::Error> {
-        let mut files = vec![];
-
-        for entry in entries {
-            if entry.len > 0 {
-                let full_len = entry.len as usize * 2048;
-                let position = entry.offset as u64 * 2048;
-
-                let mut data = vec![0u8; full_len];
-                println!(
-                    "Tryna read {} bytes at {} for filetype {}",
-                    full_len, position, filetype
-                );
-
-                file.read_exact_at(&mut data, position)?;
-
-                files.push(KidzFile {
-                    hed: *entry,
-                    data,
-                    t: *filetype,
-                });
-            } else {
-                files.push(KidzFile {
-                    hed: *entry,
-                    data: vec![],
-                    t: KidzFileType::Empty,
-                });
-            }
-        }
-
-        Ok(files)
-    }
-
-    fn get_dat_files(hed: &File, dat: &File) -> Result<Vec<KidzFile>, crate::error::Error> {
-        let mut buf = [0u8; 0x600];
-
-        hed.read_exact_at(&mut buf, 0)
-            .or(Err("Failed to read DAT section of HED"))?;
-
-        let entries: Result<Vec<HedEntry>, TryFromSliceError> =
-            buf.chunks_exact(4).map(HedEntry::try_from).collect();
-        let entries = entries?;
-
-        Self::read_files(&entries, dat, &KidzFileType::Dat)
-    }
-
-    fn get_bns_files(hed: &File, bns: &File) -> Result<Vec<KidzFile>, crate::error::Error> {
-        let mut buf = [0u8; 0x10];
-
-        hed.read_exact_at(&mut buf, 0x600)
-            .or(Err("Failed to read BNS section of HED"))?;
-
-        let entries: Result<Vec<HedEntry>, TryFromSliceError> =
-            buf.chunks_exact(4).map(HedEntry::try_from).collect();
-        let entries = entries?;
-
-        Self::read_files(&entries, bns, &KidzFileType::Bns)
-    }
-
-    fn get_str_files(hed: &File) -> Result<Vec<KidzFile>, crate::error::Error> {
-        let mut buf = [0u8; 0x10];
-
-        hed.read_exact_at(&mut buf, 0x700)
-            .or(Err("Failed to read STR section of HED"))?;
-
-        let entries: Result<Vec<HedEntry>, TryFromSliceError> =
-            buf.chunks_exact(4).map(HedEntry::try_from).collect();
-        let entries = entries?;
-
-        Ok(entries
-            .iter()
-            .map(|entry| KidzFile {
-                hed: *entry,
-                data: vec![],
-                t: KidzFileType::Str,
-            })
-            .collect())
-    }
-
     pub fn load<P: AsRef<Path>>(hed: P, dat: P, bns: P) -> Result<Self, crate::error::Error> {
         let hed = File::open(hed)?;
         let dat = File::open(dat)?;
         let bns = File::open(bns)?;
-
-        let mut files: Vec<KidzFile> = vec![];
 
         let mut buf = [0u8; 0x800];
 
@@ -244,13 +159,7 @@ impl Kidz {
             buf.chunks_exact(4).map(HedEntry::try_from).collect();
         let entries = entries?;
 
-        files.append(&mut Self::read_all_files(&entries, &dat, &bns)?);
-
-        // files.append(&mut Self::get_dat_files(&hed, &dat)?);
-        // files.append(&mut Self::get_bns_files(&hed, &dat)?);
-        // files.append(&mut Self::get_str_files(&hed)?);
-
-        Ok(Self { files })
+        Ok(Self { files: Self::read_all_files(&entries, &dat, &bns)? })
     }
 }
 
