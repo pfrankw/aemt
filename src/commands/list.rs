@@ -3,7 +3,7 @@ use crate::{
     kidz::{Kidz, KidzFileType},
 };
 
-pub fn list(args: Args) -> Result<(), crate::error::Error> {
+pub fn list(args: &Args) -> Result<(), crate::error::Error> {
     let kidz = Kidz::load(&args.hed, &args.dat, &args.bns)?;
 
     println!(
