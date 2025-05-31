@@ -2,14 +2,14 @@ use std::{fs::File, io::Write};
 
 use crate::{
     args::{Args, ExtractArgs},
-    kidz::{Kidz, KidzFileType},
+    kidz::Kidz,
 };
 
 pub fn extract(args: &Args, eargs: &ExtractArgs) -> Result<(), crate::error::Error> {
     let kidz = Kidz::load(&args.hed, &args.dat, &args.bns)?;
 
     let mut ofile = File::create(&eargs.output)?;
-    let kfile = kidz.files.get(eargs.index).ok_or("Index out of bound")?;
+    let kfile = kidz.files.get(eargs.index).ok_or(crate::error::Error::Oob)?;
 
     ofile.write_all(&kfile.data)?;
 

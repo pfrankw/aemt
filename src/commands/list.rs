@@ -1,6 +1,6 @@
 use crate::{
     args::Args,
-    kidz::{Kidz, KidzFileType},
+    kidz::{Kidz, FileType},
 };
 
 pub fn list(args: &Args) -> Result<(), crate::error::Error> {
@@ -12,7 +12,7 @@ pub fn list(args: &Args) -> Result<(), crate::error::Error> {
     );
 
     for (index, file) in kidz.files.iter().enumerate() {
-        if let KidzFileType::Empty = file.t {
+        if let FileType::Empty = file.t {
             continue;
         }
 

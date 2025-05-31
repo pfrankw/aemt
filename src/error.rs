@@ -3,7 +3,10 @@ use std::fmt;
 #[derive(Debug)]
 pub enum Error {
     Generic(String),
+    Conversion(String),
+    Io(String),
     InvalidLength(String),
+    Oob,
 }
 
 impl From<String> for Error {
@@ -20,13 +23,13 @@ impl From<&str> for Error {
 
 impl From<std::array::TryFromSliceError> for Error {
     fn from(value: std::array::TryFromSliceError) -> Self {
-        Self::Generic(value.to_string())
+        Self::Conversion(value.to_string())
     }
 }
 
 impl From<std::io::Error> for Error {
     fn from(value: std::io::Error) -> Self {
-        Self::Generic(value.to_string())
+        Self::Io(value.to_string())
     }
 }
 
@@ -38,6 +41,15 @@ impl fmt::Display for Error {
             }
             Self::InvalidLength(message) => {
                 write!(f, "Invalid Length: {}", message)
+            }
+            Self::Oob => {
+                write!(f, "Index out of bound")
+            }
+            Self::Conversion(message) => {
+                write!(f, "Conversion Error: {}", message)
+            }
+            Self::Io(message) => {
+                write!(f, "I/O Error: {}", message)
             }
         }
     }

@@ -45,20 +45,20 @@ impl From<HedEntry> for [u8; 4] {
 }
 
 #[derive(Clone, Copy)]
-pub enum KidzFileType {
+pub enum FileType {
     Empty,
     Dat,
     Bns,
     Str,
 }
 
-impl std::fmt::Display for KidzFileType {
+impl std::fmt::Display for FileType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let ret = match self {
-            KidzFileType::Str => "STR",
-            KidzFileType::Dat => "DAT",
-            KidzFileType::Bns => "BNS",
-            KidzFileType::Empty => "Empty",
+            FileType::Str => "STR",
+            FileType::Dat => "DAT",
+            FileType::Bns => "BNS",
+            FileType::Empty => "Empty",
         };
 
         ret.fmt(f)
@@ -68,7 +68,7 @@ impl std::fmt::Display for KidzFileType {
 pub struct KidzFile {
     pub hed: HedEntry,
     pub data: Vec<u8>,
-    pub t: KidzFileType,
+    pub t: FileType,
 }
 
 impl KidzFile {}
@@ -94,7 +94,7 @@ impl Kidz {
                     files.push(KidzFile {
                         hed: *entry,
                         data: vec![],
-                        t: KidzFileType::Empty,
+                        t: FileType::Empty,
                     });
                 }
                 // Any other file is non-empty
@@ -115,7 +115,7 @@ impl Kidz {
                                 dat.read_exact_at(&mut data, position)
                                     .or(Err("Failed to read DAT"))?;
 
-                                filetype = KidzFileType::Dat;
+                                filetype = FileType::Dat;
                             }
 
                             // If position is over the DAT file it means we need to read from the
@@ -126,11 +126,11 @@ impl Kidz {
                                 bns.read_exact_at(&mut data, position)
                                     .or(Err("Failed to read BNS"))?;
 
-                                filetype = KidzFileType::Bns;
+                                filetype = FileType::Bns;
                             }
                         },
                         // If > 700h we are reading an STR file
-                        false => filetype = KidzFileType::Str,
+                        false => filetype = FileType::Str,
                     }
 
                     files.push(KidzFile {
