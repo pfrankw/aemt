@@ -164,7 +164,7 @@ impl Kidz {
         })
     }
 
-    fn get_archive_len(&self, t: FileType, dat_len: usize) -> usize {
+    pub fn get_archive_len(&self, t: FileType, dat_len: usize) -> usize {
         let last_file = self
             .files
             .iter()

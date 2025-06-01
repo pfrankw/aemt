@@ -12,8 +12,8 @@ fn main() -> Result<(), Box<dyn Error>> {
     let args = Args::parse();
 
     match &args.command {
-        Command::List => {
-            commands::list::list(&args)?;
+        Command::List(eargs) => {
+            commands::list::list(&args, eargs)?;
         }
         Command::Extract(eargs) => {
             commands::extract::extract(&args, eargs)?;

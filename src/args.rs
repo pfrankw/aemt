@@ -17,6 +17,17 @@ pub struct Args {
 }
 
 #[derive(Debug, Parser)]
+pub struct ListArgs {
+    /// If set, prints offsets relative to the DAT start instead of the BNS start.
+    #[arg(long, default_value = "false")]
+    pub true_bns: bool,
+
+    /// If set, prints values in decimal
+    #[arg(long, default_value = "false")]
+    pub decimal: bool
+}
+
+#[derive(Debug, Parser)]
 pub struct ExtractArgs {
     /// Index of the file to be extracted. Starts from 0.
     pub index: usize,
@@ -46,7 +57,7 @@ pub struct SwapArgs {
 #[derive(Debug, Subcommand)]
 pub enum Command {
     /// List files inside the KKIIDDZZ.DAT archive
-    List,
+    List(ListArgs),
 
     /// Extract a file from the KKIIDDZZ.DAT archive
     Extract(ExtractArgs),
