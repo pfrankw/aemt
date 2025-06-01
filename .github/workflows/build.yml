@@ -30,7 +30,7 @@ jobs:
     - name: Build
       run: cargo build --target x86_64-unknown-linux-musl --release --verbose
     - name: version
-      run: echo "version=$(/target/x86_64-unknown-linux-musl/release/aemt --version | cut -d ' ' -f 2)" >> $GITHUB_OUTPUT
+      run: echo "version=$(./target/x86_64-unknown-linux-musl/release/aemt --version | cut -d ' ' -f 2)" >> $GITHUB_OUTPUT
       id: version
     - name: release
       uses: actions/create-release@v1
