@@ -68,7 +68,7 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./target/x86_64-unknown-linux-musl/release/aemt
-        asset_name: aemt_${{ steps.version.outputs.version }}_linux
+        asset_name: aemt_${{ steps.version.outputs.version }}_linux_amd64
         asset_content_type: application/octet-stream
 
     - name: Upload Windows artifact
@@ -78,5 +78,5 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./target/x86_64-pc-windows-gnu/release/aemt.exe
-        asset_name: aemt_${{ steps.version.outputs.version }}_windows.exe
+        asset_name: aemt_${{ steps.version.outputs.version }}_windows_amd64.exe
         asset_content_type: application/octet-stream
