@@ -50,6 +50,12 @@ jobs:
       id: short_sha
       run: echo "short_sha=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_OUTPUT
 
+    - name: Compress Linux artifacts
+      run: xz -k -9 ./target/x86_64-unknown-linux-musl/release/aemt
+
+    - name: Compress Windows artifacts
+      run: xz -k -9 ./target/x86_64-pc-windows-gnu/release/aemt.exe
+
     - name: Release
       uses: actions/create-release@v1
       id: create_release
@@ -60,12 +66,6 @@ jobs:
         tag_name: v${{ steps.version.outputs.version }}-${{ steps.short_sha.outputs.short_sha }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    
-    - name: Compress Linux artifacts
-      run: xz -k -9 ./target/x86_64-unknown-linux-musl/release/aemt
-
-    - name: Compress Windows artifacts
-      run: xz -k -9 ./target/x86_64-pc-windows-gnu/release/aemt.exe
 
     - name: Upload Linux artifact
       uses: actions/upload-release-asset@v1
