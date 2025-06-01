@@ -1,8 +1,3 @@
-use std::{
-    fs::File,
-    io::{Read, Write},
-};
-
 use crate::{
     args::{Args, PatchArgs},
     kidz::Kidz,

@@ -1,4 +1,4 @@
-use std::{array::TryFromSliceError, fmt, fs::File, io::Write, os::unix::fs::FileExt, path::Path};
+use std::{array::TryFromSliceError, fs::File, io::Write, os::unix::fs::FileExt, path::Path};
 
 #[derive(Default, Clone, Copy)]
 pub struct HedEntry {
@@ -181,6 +181,34 @@ impl Kidz {
 
     fn get_file_hed(&self, index: usize) -> Option<HedEntry> {
         self.files.get(index).map(|file| file.hed)
+    }
+
+    pub fn _get(&self, index: usize) -> Option<&KidzFile> {
+        self.files.get(index)
+    }
+
+    pub fn swap(&mut self, index_a: usize, index_b: usize) -> Result<(), crate::error::Error> {
+        let data_a = self
+            .files
+            .get(index_a)
+            .ok_or(crate::error::Error::Oob)?
+            .data
+            .clone();
+        let data_b = self
+            .files
+            .get(index_b)
+            .ok_or(crate::error::Error::Oob)?
+            .data
+            .clone();
+
+        self.patch(index_a, data_b)?;
+        self.patch(index_b, data_a)?;
+
+        let tmp_hed = self.files[index_b].hed;
+        self.files[index_b].hed = self.files[index_a].hed;
+        self.files[index_a].hed = tmp_hed;
+
+        Ok(())
     }
 
     pub fn patch(&mut self, index: usize, data: Vec<u8>) -> Result<(), crate::error::Error> {
