@@ -33,7 +33,7 @@ jobs:
     - name: Build
       run: cargo build --target x86_64-unknown-linux-musl --release --verbose
 
-    - name: version
+    - name: Get version
       run: echo "version=$(./target/x86_64-unknown-linux-musl/release/aemt --version | cut -d ' ' -f 2)" >> $GITHUB_OUTPUT
       id: version
 
@@ -41,7 +41,7 @@ jobs:
       id: short_sha
       run: echo "short_sha=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_OUTPUT
 
-    - name: release
+    - name: Release
       uses: actions/create-release@v1
       id: create_release
       with:
