@@ -29,8 +29,14 @@ jobs:
       run: cargo test --verbose
     - name: Build
       run: cargo build --target x86_64-unknown-linux-musl --release --verbose
-    - name: Build
-      run: cargo build --target x86_64-apple-darwin --release --verbose
     - name: Version
-      run: ./target/x86_64-unknown-linux-musl/release/aemt --version
+      run: echo "::set-output name=version::$(/target/x86_64-unknown-linux-musl/release/aemt --version | cut -d ' ' -f 2)"
       id: version
+    - name: release
+      uses: actions/create-release@v1
+      id: create_release
+      with:
+        draft: false
+        prerelease: false
+        release_name: ${{ steps.version.outputs.version }}
+        tag_name: ${{ github.ref }}
