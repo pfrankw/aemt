@@ -62,10 +62,10 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
     - name: Compress Linux artifacts
-      run: xz -9 ./target/x86_64-unknown-linux-musl/release/aemt
+      run: xz -k -9 ./target/x86_64-unknown-linux-musl/release/aemt
 
     - name: Compress Windows artifacts
-      run: xz -9 ./target/x86_64-pc-windows-gnu/release/aemt.exe
+      run: xz -k -9 ./target/x86_64-pc-windows-gnu/release/aemt.exe
 
     - name: Upload Linux artifact
       uses: actions/upload-release-asset@v1
