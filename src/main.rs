@@ -21,6 +21,10 @@ fn main() -> Result<(), Box<dyn Error>> {
         Command::Patch(eargs) => {
             commands::patch::patch(&args, eargs)?;
         }
+        Command::Swap(eargs) => {
+            commands::swap::swap(&args, eargs)?;
+        }
+
     }
 
     Ok(())

@@ -179,12 +179,52 @@ impl Kidz {
         }
     }
 
-    pub fn store<P: AsRef<Path>>(
-        &self,
-        hed: P,
-        dat: P,
-        bns: P,
-    ) -> Result<(), crate::error::Error> {
+    fn get_file_hed(&self, index: usize) -> Option<HedEntry> {
+        self.files.get(index).map(|file| file.hed)
+    }
+
+    pub fn patch(&mut self, index: usize, data: Vec<u8>) -> Result<(), crate::error::Error> {
+        if data.len() % 2048 != 0 {
+            return Err(crate::error::Error::InvalidLength(
+                "Length must be a multiple of 2048".to_string(),
+            ));
+        // hed.len is a 12 bit number, so the maximum sector_len must be 4095
+        } else if (data.len() / 2048) > ((2usize.pow(12)) - 1) {
+            return Err(crate::error::Error::InvalidLength(
+                "File is too big. Maximum allowed size is 8386560 bytes".to_string(),
+            ));
+        }
+
+        let data_sec_len: u16 = (data.len() / 2048) as u16;
+        let hed = self.get_file_hed(index).ok_or(crate::error::Error::Oob)?;
+
+        if data_sec_len != hed.len {
+            let mut afterfiles: Vec<&mut KidzFile> = self
+                .files
+                .iter_mut()
+                .filter(|f| f.hed.offset > hed.offset)
+                .collect();
+
+            if data_sec_len > hed.len {
+                afterfiles
+                    .iter_mut()
+                    .for_each(|f| f.hed.offset += (data_sec_len - hed.len) as u32);
+            } else {
+                afterfiles
+                    .iter_mut()
+                    .for_each(|f| f.hed.offset -= (hed.len - data_sec_len) as u32);
+            }
+        }
+
+        let file = self.files.get_mut(index).ok_or(crate::error::Error::Oob)?;
+
+        file.data = data;
+        file.hed.len = data_sec_len;
+
+        Ok(())
+    }
+
+    pub fn store<P: AsRef<Path>>(&self, hed: P, dat: P, bns: P) -> Result<(), crate::error::Error> {
         let mut hed = File::create(hed)?;
         let dat = File::create(dat)?;
         let bns = File::create(bns)?;
@@ -200,8 +240,12 @@ impl Kidz {
             hed.write_all(&hed_index.to_le_bytes())?;
 
             match file.t {
-                FileType::Dat => {dat.write_all_at(&file.data, file.hed.offset as u64 * 2048)?;},
-                FileType::Bns => {bns.write_all_at(&file.data, (file.hed.offset as u64 * 2048) - dat_len as u64)?;},
+                FileType::Dat => {
+                    dat.write_all_at(&file.data, file.hed.offset as u64 * 2048)?;
+                }
+                FileType::Bns => {
+                    bns.write_all_at(&file.data, (file.hed.offset as u64 * 2048) - dat_len as u64)?;
+                }
                 _ => {}
             }
         }

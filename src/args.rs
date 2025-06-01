@@ -34,6 +34,15 @@ pub struct PatchArgs {
     pub input: String,
 }
 
+#[derive(Debug, Parser)]
+pub struct SwapArgs {
+    /// Index of the first file to be swapped. Starts from 0.
+    pub index_a: usize,
+
+    /// Index of the second file to be swapped. Starts from 0.
+    pub index_b: usize,
+}
+
 #[derive(Debug, Subcommand)]
 pub enum Command {
     /// List files inside the KKIIDDZZ.DAT archive
@@ -45,4 +54,8 @@ pub enum Command {
     /// Patches a file inside the KKIIDDZZ.DAT. The input file is replaced with the one already
     /// present at the same index. The two files must have the same length
     Patch(PatchArgs),
+
+    /// Swap two files inside the KKIIDDZZ.DAT. Not really an useful command for modding. Made just
+    /// for testing the archive capabilities.
+    Swap(SwapArgs),
 }
