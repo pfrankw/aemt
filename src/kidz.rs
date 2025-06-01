@@ -1,4 +1,9 @@
-use std::{array::TryFromSliceError, fs::File, io::Write, os::unix::fs::FileExt, path::Path};
+use std::{
+    array::TryFromSliceError,
+    fs::File,
+    io::{Read, Seek, SeekFrom, Write},
+    path::Path,
+};
 
 #[derive(Default, Clone, Copy)]
 pub struct HedEntry {
@@ -80,8 +85,8 @@ pub struct Kidz {
 impl Kidz {
     fn read_all_files(
         entries: &[HedEntry],
-        dat: &File,
-        bns: &File,
+        dat: &mut File,
+        bns: &mut File,
     ) -> Result<Vec<KidzFile>, crate::error::Error> {
         let mut files = vec![];
         let dat_len = dat.metadata()?.len();
@@ -112,8 +117,8 @@ impl Kidz {
                         // the BNS file
                         true => match position < dat_len {
                             true => {
-                                dat.read_exact_at(&mut data, position)
-                                    .or(Err("Failed to read DAT"))?;
+                                dat.seek(SeekFrom::Start(position))?;
+                                dat.read_exact(&mut data).or(Err("Failed to read DAT"))?;
 
                                 filetype = FileType::Dat;
                             }
@@ -123,8 +128,8 @@ impl Kidz {
                             false => {
                                 let position = position - dat_len;
 
-                                bns.read_exact_at(&mut data, position)
-                                    .or(Err("Failed to read BNS"))?;
+                                bns.seek(SeekFrom::Start(position))?;
+                                bns.read_exact(&mut data).or(Err("Failed to read BNS"))?;
 
                                 filetype = FileType::Bns;
                             }
@@ -146,21 +151,21 @@ impl Kidz {
     }
 
     pub fn load<P: AsRef<Path>>(hed: P, dat: P, bns: P) -> Result<Self, crate::error::Error> {
-        let hed = File::open(hed)?;
-        let dat = File::open(dat)?;
-        let bns = File::open(bns)?;
+        let mut hed = File::open(hed)?;
+        let mut dat = File::open(dat)?;
+        let mut bns = File::open(bns)?;
 
         let mut buf = [0u8; 0x800];
 
-        hed.read_exact_at(&mut buf, 0)
-            .or(Err("Failed to read STR section of HED"))?;
+        hed.read_exact(&mut buf)
+            .or(Err("Failed to read the HED file"))?;
 
         let entries: Result<Vec<HedEntry>, TryFromSliceError> =
             buf.chunks_exact(4).map(HedEntry::try_from).collect();
         let entries = entries?;
 
         Ok(Self {
-            files: Self::read_all_files(&entries, &dat, &bns)?,
+            files: Self::read_all_files(&entries, &mut dat, &mut bns)?,
         })
     }
 
@@ -254,8 +259,8 @@ impl Kidz {
 
     pub fn store<P: AsRef<Path>>(&self, hed: P, dat: P, bns: P) -> Result<(), crate::error::Error> {
         let mut hed = File::create(hed)?;
-        let dat = File::create(dat)?;
-        let bns = File::create(bns)?;
+        let mut dat = File::create(dat)?;
+        let mut bns = File::create(bns)?;
 
         let dat_len = self.get_archive_len(FileType::Dat, 0);
         let bns_len = self.get_archive_len(FileType::Bns, dat_len);
@@ -269,10 +274,12 @@ impl Kidz {
 
             match file.t {
                 FileType::Dat => {
-                    dat.write_all_at(&file.data, file.hed.offset as u64 * 2048)?;
+                    dat.seek(SeekFrom::Start(file.hed.offset as u64 * 2048))?;
+                    dat.write_all(&file.data)?;
                 }
                 FileType::Bns => {
-                    bns.write_all_at(&file.data, (file.hed.offset as u64 * 2048) - dat_len as u64)?;
+                    bns.seek(SeekFrom::Start((file.hed.offset as u64 * 2048) - dat_len as u64))?;
+                    bns.write_all(&file.data)?;
                 }
                 _ => {}
             }
