@@ -18,6 +18,9 @@ fn main() -> Result<(), Box<dyn Error>> {
         Command::Extract(eargs) => {
             commands::extract::extract(&args, eargs)?;
         }
+        Command::Patch(eargs) => {
+            commands::patch::patch(&args, eargs)?;
+        }
     }
 
     Ok(())

@@ -1,4 +1,4 @@
-use std::{array::TryFromSliceError, fmt, fs::File, os::unix::fs::FileExt, path::Path};
+use std::{array::TryFromSliceError, fmt, fs::File, io::Write, os::unix::fs::FileExt, path::Path};
 
 #[derive(Default, Clone, Copy)]
 pub struct HedEntry {
@@ -44,7 +44,7 @@ impl From<HedEntry> for [u8; 4] {
     }
 }
 
-#[derive(Clone, Copy)]
+#[derive(PartialEq, Eq, Clone, Copy)]
 pub enum FileType {
     Empty,
     Dat,
@@ -159,7 +159,54 @@ impl Kidz {
             buf.chunks_exact(4).map(HedEntry::try_from).collect();
         let entries = entries?;
 
-        Ok(Self { files: Self::read_all_files(&entries, &dat, &bns)? })
+        Ok(Self {
+            files: Self::read_all_files(&entries, &dat, &bns)?,
+        })
+    }
+
+    fn get_archive_len(&self, t: FileType, dat_len: usize) -> usize {
+        let last_file = self
+            .files
+            .iter()
+            .filter(|file| file.t == t)
+            .max_by_key(|x| x.hed.offset)
+            .unwrap();
+
+        if t == FileType::Bns {
+            (last_file.hed.offset as usize * 2048) + (last_file.hed.len as usize * 2048) - dat_len
+        } else {
+            (last_file.hed.offset as usize * 2048) + (last_file.hed.len as usize * 2048)
+        }
+    }
+
+    pub fn store<P: AsRef<Path>>(
+        &self,
+        hed: P,
+        dat: P,
+        bns: P,
+    ) -> Result<(), crate::error::Error> {
+        let mut hed = File::create(hed)?;
+        let dat = File::create(dat)?;
+        let bns = File::create(bns)?;
+
+        let dat_len = self.get_archive_len(FileType::Dat, 0);
+        let bns_len = self.get_archive_len(FileType::Bns, dat_len);
+
+        dat.set_len(dat_len as u64)?;
+        bns.set_len(bns_len as u64)?;
+
+        for file in self.files.iter() {
+            let hed_index: u32 = file.hed.into();
+            hed.write_all(&hed_index.to_le_bytes())?;
+
+            match file.t {
+                FileType::Dat => {dat.write_all_at(&file.data, file.hed.offset as u64 * 2048)?;},
+                FileType::Bns => {bns.write_all_at(&file.data, (file.hed.offset as u64 * 2048) - dat_len as u64)?;},
+                _ => {}
+            }
+        }
+
+        Ok(())
     }
 }
 

@@ -25,6 +25,15 @@ pub struct ExtractArgs {
     pub output: String,
 }
 
+#[derive(Debug, Parser)]
+pub struct PatchArgs {
+    /// Index of the file to be extracted. Starts from 0.
+    pub index: usize,
+
+    /// Input file to be inserted at the specific index
+    pub input: String,
+}
+
 #[derive(Debug, Subcommand)]
 pub enum Command {
     /// List files inside the KKIIDDZZ.DAT archive
@@ -32,4 +41,8 @@ pub enum Command {
 
     /// Extract a file from the KKIIDDZZ.DAT archive
     Extract(ExtractArgs),
+
+    /// Patches a file inside the KKIIDDZZ.DAT. The input file is replaced with the one already
+    /// present at the same index. The two files must have the same length
+    Patch(PatchArgs),
 }
