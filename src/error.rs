@@ -1,4 +1,4 @@
-use std::fmt;
+use std::{fmt, num::ParseIntError};
 
 #[derive(Debug)]
 pub enum Error {
@@ -6,6 +6,7 @@ pub enum Error {
     Conversion(String),
     Io(String),
     InvalidLength(String),
+    InvalidNumber(String),
     Oob,
 }
 
@@ -18,6 +19,11 @@ impl From<String> for Error {
 impl From<&str> for Error {
     fn from(value: &str) -> Self {
         Self::Generic(value.to_string())
+    }
+}
+impl From<ParseIntError> for Error {
+    fn from(value: ParseIntError) -> Self {
+        Self::InvalidNumber(value.to_string())
     }
 }
 
@@ -41,6 +47,9 @@ impl fmt::Display for Error {
             }
             Self::InvalidLength(message) => {
                 write!(f, "Invalid Length: {}", message)
+            }
+            Self::InvalidNumber(message) => {
+                write!(f, "Invalid Number: {}", message)
             }
             Self::Oob => {
                 write!(f, "Index out of bound")

@@ -24,7 +24,7 @@ pub struct ListArgs {
 
     /// If set, prints values in decimal
     #[arg(long, default_value = "false")]
-    pub decimal: bool
+    pub decimal: bool,
 }
 
 #[derive(Debug, Parser)]
@@ -54,6 +54,18 @@ pub struct SwapArgs {
     pub index_b: usize,
 }
 
+#[derive(Debug, Parser)]
+pub struct HeditArgs {
+    /// Index of the file to be modified
+    pub index: usize,
+
+    /// New offset
+    pub offset: String,
+
+    /// New length
+    pub length: String,
+}
+
 #[derive(Debug, Subcommand)]
 pub enum Command {
     /// List files inside the KKIIDDZZ.DAT archive
@@ -69,4 +81,8 @@ pub enum Command {
     /// Swap two files inside the KKIIDDZZ.DAT. Not really an useful command for modding. Made just
     /// for testing the archive capabilities.
     Swap(SwapArgs),
+
+    /// Raw editing the offset/length pair of each file present in the HED.
+    /// Exercise caution as it may break the whole archive.
+    Hedit(HeditArgs),
 }

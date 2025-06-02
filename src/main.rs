@@ -24,7 +24,9 @@ fn main() -> Result<(), Box<dyn Error>> {
         Command::Swap(eargs) => {
             commands::swap::swap(&args, eargs)?;
         }
-
+        Command::Hedit(eargs) => {
+            commands::hedit::hedit(&args, eargs)?;
+        }
     }
 
     Ok(())

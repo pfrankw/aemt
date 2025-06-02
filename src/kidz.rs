@@ -192,6 +192,20 @@ impl Kidz {
         self.files.get(index)
     }
 
+    pub fn hedit(
+        &mut self,
+        index: usize,
+        offset: u32,
+        len: u16,
+    ) -> Result<(), crate::error::Error> {
+        let file = self.files.get_mut(index).ok_or(crate::error::Error::Oob)?;
+
+        file.hed.offset = offset;
+        file.hed.len = len;
+
+        Ok(())
+    }
+
     pub fn swap(&mut self, index_a: usize, index_b: usize) -> Result<(), crate::error::Error> {
         let data_a = self
             .files
@@ -278,7 +292,9 @@ impl Kidz {
                     dat.write_all(&file.data)?;
                 }
                 FileType::Bns => {
-                    bns.seek(SeekFrom::Start((file.hed.offset as u64 * 2048) - dat_len as u64))?;
+                    bns.seek(SeekFrom::Start(
+                        (file.hed.offset as u64 * 2048) - dat_len as u64,
+                    ))?;
                     bns.write_all(&file.data)?;
                 }
                 _ => {}
