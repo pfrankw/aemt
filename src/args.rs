@@ -3,7 +3,7 @@ use clap::{Parser, Subcommand};
 #[derive(Debug, Parser)]
 #[clap(author, version, about)]
 pub struct Args {
-    /// The directory where KKIIDDZZ files are located
+    /// The directory where KKIIDDZZ files are located.
     pub directory: String,
 
     #[clap(subcommand)]
@@ -16,7 +16,7 @@ pub struct ListArgs {
     #[arg(long, default_value = "false")]
     pub true_bns: bool,
 
-    /// If set, prints values in decimal
+    /// If set, prints values in decimal.
     #[arg(long, default_value = "false")]
     pub decimal: bool,
 }
@@ -35,7 +35,7 @@ pub struct PatchArgs {
     /// Index of the file to be extracted. Starts from 0.
     pub index: usize,
 
-    /// Input file to be inserted at the specific index
+    /// Input file to be inserted at the specific index.
     pub input: String,
 }
 
@@ -62,14 +62,14 @@ pub struct HeditArgs {
 
 #[derive(Debug, Subcommand)]
 pub enum Command {
-    /// List files inside the KKIIDDZZ.DAT archive
+    /// List files inside the KKIIDDZZ.DAT archive.
     List(ListArgs),
 
-    /// Extract a file from the KKIIDDZZ.DAT archive
+    /// Extract a file from the KKIIDDZZ.DAT archive.
     Extract(ExtractArgs),
 
     /// Patches a file inside the KKIIDDZZ.DAT. The input file is replaced with the one already
-    /// present at the same index. The two files must have the same length
+    /// present at the same index. The two files must have the same length.
     Patch(PatchArgs),
 
     /// Swap two files inside the KKIIDDZZ.DAT. Not really an useful command for modding. Made just
@@ -78,5 +78,6 @@ pub enum Command {
 
     /// Raw editing the offset/length pair of each file present in the HED.
     /// Exercise caution as it may break the whole archive.
+    /// Generally used for STR files.
     Hedit(HeditArgs),
 }
