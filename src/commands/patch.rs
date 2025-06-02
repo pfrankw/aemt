@@ -4,11 +4,11 @@ use crate::{
 };
 
 pub fn patch(args: &Args, eargs: &PatchArgs) -> Result<(), crate::error::Error> {
-    let mut kidz = Kidz::load(&args.hed, &args.dat, &args.bns)?;
+    let mut kidz = Kidz::load(&args.directory)?;
 
     kidz.patch(eargs.index, std::fs::read(&eargs.input)?)?;
 
-    kidz.store(&args.hed, &args.dat, &args.bns)?;
+    kidz.store(&args.directory)?;
 
     println!("Archive patched");
 

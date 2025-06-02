@@ -150,10 +150,10 @@ impl Kidz {
         Ok(files)
     }
 
-    pub fn load<P: AsRef<Path>>(hed: P, dat: P, bns: P) -> Result<Self, crate::error::Error> {
-        let mut hed = File::open(hed)?;
-        let mut dat = File::open(dat)?;
-        let mut bns = File::open(bns)?;
+    pub fn load<P: AsRef<Path>>(directory: P) -> Result<Self, crate::error::Error> {
+        let mut hed = File::open(directory.as_ref().join("KKIIDDZZ.HED"))?;
+        let mut dat = File::open(directory.as_ref().join("KKIIDDZZ.DAT"))?;
+        let mut bns = File::open(directory.as_ref().join("KKIIDDZZ.BNS"))?;
 
         let mut buf = [0u8; 0x800];
 
@@ -271,10 +271,10 @@ impl Kidz {
         Ok(())
     }
 
-    pub fn store<P: AsRef<Path>>(&self, hed: P, dat: P, bns: P) -> Result<(), crate::error::Error> {
-        let mut hed = File::create(hed)?;
-        let mut dat = File::create(dat)?;
-        let mut bns = File::create(bns)?;
+    pub fn store<P: AsRef<Path>>(&self, directory: P) -> Result<(), crate::error::Error> {
+        let mut hed = File::create(directory.as_ref().join("KKIIDDZZ.HED"))?;
+        let mut dat = File::create(directory.as_ref().join("KKIIDDZZ.DAT"))?;
+        let mut bns = File::create(directory.as_ref().join("KKIIDDZZ.BNS"))?;
 
         let dat_len = self.get_archive_len(FileType::Dat, 0);
         let bns_len = self.get_archive_len(FileType::Bns, dat_len);

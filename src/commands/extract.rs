@@ -6,7 +6,7 @@ use crate::{
 };
 
 pub fn extract(args: &Args, eargs: &ExtractArgs) -> Result<(), crate::error::Error> {
-    let kidz = Kidz::load(&args.hed, &args.dat, &args.bns)?;
+    let kidz = Kidz::load(&args.directory)?;
 
     let mut ofile = File::create(&eargs.output)?;
     let kfile = kidz.files.get(eargs.index).ok_or(crate::error::Error::Oob)?;

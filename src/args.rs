@@ -3,14 +3,8 @@ use clap::{Parser, Subcommand};
 #[derive(Debug, Parser)]
 #[clap(author, version, about)]
 pub struct Args {
-    /// KKIIDDZZ.HED path
-    pub hed: String,
-
-    /// KKIIDDZZ.DAT path
-    pub dat: String,
-
-    /// KKIIDDZZ.BNS path
-    pub bns: String,
+    /// The directory where KKIIDDZZ files are located
+    pub directory: String,
 
     #[clap(subcommand)]
     pub command: Command,

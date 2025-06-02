@@ -8,7 +8,7 @@ use crate::{
 /// Swapping seems to be permitted but not for all files. It's like some file offsets are hardcoded
 /// somewhere.
 pub fn swap(args: &Args, eargs: &SwapArgs) -> Result<(), crate::error::Error> {
-    let mut kidz = Kidz::load(&args.hed, &args.dat, &args.bns)?;
+    let mut kidz = Kidz::load(&args.directory)?;
 
     println!(
         "Swapping data at index {} with data at index {} and vice versa",
@@ -16,7 +16,7 @@ pub fn swap(args: &Args, eargs: &SwapArgs) -> Result<(), crate::error::Error> {
     );
 
     kidz.swap(eargs.index_a, eargs.index_b)?;
-    kidz.store(&args.hed, &args.dat, &args.bns)?;
+    kidz.store(&args.directory)?;
 
     println!("Archive patched");
 

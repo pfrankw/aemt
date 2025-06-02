@@ -4,7 +4,7 @@ use crate::{
 };
 
 pub fn list(args: &Args, eargs: &ListArgs) -> Result<(), crate::error::Error> {
-    let kidz = Kidz::load(&args.hed, &args.dat, &args.bns)?;
+    let kidz = Kidz::load(&args.directory)?;
     let dat_len = kidz.get_archive_len(FileType::Dat, 0);
 
     println!(
