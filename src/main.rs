@@ -7,6 +7,7 @@ mod args;
 mod commands;
 mod error;
 mod kidz;
+mod utils;
 
 fn main() -> Result<(), Box<dyn Error>> {
     let args = Args::parse();
@@ -26,6 +27,9 @@ fn main() -> Result<(), Box<dyn Error>> {
         }
         Command::Hedit(eargs) => {
             commands::hedit::hedit(&args, eargs)?;
+        }
+        Command::Play(eargs) => {
+            commands::play::play(&args, eargs)?;
         }
     }
 

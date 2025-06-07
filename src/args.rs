@@ -60,6 +60,15 @@ pub struct HeditArgs {
     pub length: String,
 }
 
+#[derive(Debug, Parser)]
+pub struct PlayArgs {
+    /// Index of the file that contains audio tracks
+    pub index: usize,
+
+    /// Number of the track to be played
+    pub track: Option<usize>,
+}
+
 #[derive(Debug, Subcommand)]
 pub enum Command {
     /// List files inside the KKIIDDZZ.DAT archive.
@@ -80,4 +89,8 @@ pub enum Command {
     /// Exercise caution as it may break the whole archive.
     /// Generally used for STR files.
     Hedit(HeditArgs),
+
+    /// Decodes ADPCM and plays the sound. Accepts the file index and the track number as
+    /// parameters.
+    Play(PlayArgs),
 }
