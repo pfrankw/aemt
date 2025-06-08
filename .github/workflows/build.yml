@@ -53,6 +53,14 @@ jobs:
     - name: Compress Windows artifacts
       run: xz -k -e -9 ./target/x86_64-pc-windows-gnu/release/aemt.exe
 
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-artifacts
+        path: |
+          ./target/release/aemt
+          ./target/x86_64-pc-windows-gnu/release/aemt.exe
+
     - name: Release
       if: github.ref == 'refs/heads/master'
       uses: actions/create-release@v1
