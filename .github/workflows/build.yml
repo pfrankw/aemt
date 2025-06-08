@@ -25,7 +25,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Adding dependencies
-      run: sudo apt install gcc-mingw-w64 libasound2-dev
+      run: sudo apt install g++-mingw-w64 gcc-mingw-w64 libasound2-dev
 
     - name: Add target x86_64-pc-windows-gnu
       run: rustup target add x86_64-pc-windows-gnu
