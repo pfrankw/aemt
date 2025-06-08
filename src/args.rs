@@ -67,6 +67,10 @@ pub struct PlayArgs {
 
     /// Number of the track to be played
     pub track: Option<usize>,
+
+    /// Shows supported audio configurations
+    #[arg(long, default_value = "false")]
+    pub show_configs: Option<bool>
 }
 
 #[derive(Debug, Subcommand)]

@@ -73,6 +73,13 @@ pub fn play(args: &Args, eargs: &PlayArgs) -> Result<(), crate::error::Error> {
     let host = cpal::default_host();
     let device = host.default_output_device().ok_or("No device")?;
 
+    if let Some(true) = eargs.show_configs {
+        let configs: Vec<cpal::SupportedStreamConfigRange> = device.supported_output_configs().map_err(|e| e.to_string())?.collect();
+        for config in configs.iter() {
+            println!("{:?}", config);
+        }
+    }
+
     let sample_rate = 18000;
     let channels = 1;
     let config = cpal::StreamConfig {
@@ -118,7 +125,7 @@ pub fn play(args: &Args, eargs: &PlayArgs) -> Result<(), crate::error::Error> {
                 tx.send(sample).map_err(|e| e.to_string())?;
             }
         }
-        
+
         // Dropping stream explicitly for clarity.
         // Dropping tx explicitly because of stream's destructor.
         // Once stream destructor gets called, it somehow blocks because it's waiting for data from
