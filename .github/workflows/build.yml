@@ -5,9 +5,9 @@ permissions:
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master", "devel" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "master", "devel" ]
 
 env:
   CARGO_TERM_COLOR: always
@@ -57,6 +57,7 @@ jobs:
       run: xz -k -e -9 ./target/x86_64-pc-windows-gnu/release/aemt.exe
 
     - name: Release
+      if: github.ref == 'refs/heads/master'
       uses: actions/create-release@v1
       id: create_release
       with:
@@ -68,6 +69,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Upload Linux artifact
+      if: github.ref == 'refs/heads/master'
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -78,6 +80,7 @@ jobs:
         asset_content_type: application/octet-stream
 
     - name: Upload Windows artifact
+      if: github.ref == 'refs/heads/master'
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
