@@ -22,9 +22,9 @@ pub fn extract_audio(args: &Args, eargs: &ExtractAudioArgs) -> Result<(), crate:
     let audios = split_audio_pack(&file.data);
 
     let track = audios.get(eargs.track).ok_or(crate::error::Error::Oob)?;
-    
+
     fs::write(&eargs.output, track)?;
-    
+
     println!("Audio track exported");
 
     Ok(())
