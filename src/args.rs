@@ -95,6 +95,6 @@ pub enum Command {
     Hedit(HeditArgs),
 
     /// Decodes ADPCM and plays the sound. Accepts the file index and the track number as
-    /// parameters.
+    /// parameters. As of now only works on Linux. Windows build is highly unstable.
     Play(PlayArgs),
 }
