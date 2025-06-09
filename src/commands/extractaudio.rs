@@ -6,6 +6,11 @@ use crate::{
     utils::audio::split_audio_pack,
 };
 
+/// Inside the KKIIDDZZ.DAT there are multiple kind of files. Some of them are files that contain
+/// ADPCM, which are called sound packs (in the context of this project at least). For example, all
+/// audio related to Spike's actions are located in the file at index 10 (index starts from 0).
+/// Inside this file there are multiple sound "tracks" that can be extracted and played using
+/// programs like vgmstream etc.
 pub fn extract_audio(args: &Args, eargs: &ExtractAudioArgs) -> Result<(), crate::error::Error> {
     let kidz = Kidz::load(&args.directory)?;
 
