@@ -81,7 +81,7 @@ pub fn play(args: &Args, eargs: &PlayArgs) -> Result<(), crate::error::Error> {
             adpcm_history2_32: 0,
         };
 
-        for chunk in audiotrack.chunks_exact(16).into_iter() {
+        for chunk in audiotrack.chunks_exact(16) {
             let mut samples = [0i16; 28];
 
             decode_adpcm(
