@@ -62,7 +62,7 @@ pub fn play(args: &Args, eargs: &PlayArgs) -> Result<(), crate::error::Error> {
 
     let audios = split_audio_pack(&file.data);
 
-    if audios.len() == 0 {
+    if audios.is_empty() {
         return Err(crate::error::Error::Generic(
             "No tracks available in the selected file".to_string(),
         ));

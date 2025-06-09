@@ -31,6 +31,9 @@ fn main() -> Result<(), Box<dyn Error>> {
         Command::Play(eargs) => {
             commands::play::play(&args, eargs)?;
         }
+        Command::ExtractAudio(eargs) => {
+            commands::extractaudio::extract_audio(&args, eargs)?;
+        }
     }
 
     Ok(())
