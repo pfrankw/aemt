@@ -32,7 +32,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             commands::play::play(&args, eargs)?;
         }
         Command::ExtractAudio(eargs) => {
-            commands::extractaudio::extract_audio(&args, eargs)?;
+            commands::extract_audio::extract_audio(&args, eargs)?;
         }
     }
 

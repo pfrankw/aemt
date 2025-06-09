@@ -1,6 +1,6 @@
 pub mod list;
 pub mod extract;
-pub mod extractaudio;
+pub mod extract_audio;
 pub mod patch;
 pub mod swap;
 pub mod hedit;
