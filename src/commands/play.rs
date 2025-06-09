@@ -1,12 +1,11 @@
 use std::sync::mpsc::{Receiver, sync_channel};
 
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
-use memchr::memmem;
 
 use crate::{
     args::{Args, PlayArgs},
     kidz::Kidz,
-    utils::adpcm::{AdpcmState, decode_adpcm},
+    utils::audio::{decode_adpcm, split_audio_pack, AdpcmState},
 };
 
 fn build_stream(
@@ -33,33 +32,6 @@ fn build_stream(
     )?;
 
     Ok(stream)
-}
-
-fn split_audio_pack(pack: &[u8]) -> Vec<&[u8]> {
-    let upper_delimiter = b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
-    let bottom_delimiter = b"\x00\x07\x77\x77\x77\x77\x77\x77\x77\x77\x77\x77\x77\x77\x77\x77";
-
-    let mut r = vec![];
-
-    let mut cur = &pack[0..];
-
-    while let Some(pos) = memmem::find(cur, upper_delimiter) {
-        let start = &cur[pos..];
-        let end = match memmem::find(start, bottom_delimiter) {
-            Some(pos) => pos,
-            None => start.len(),
-        };
-
-        let chunk = &start[..end];
-
-        if chunk.len() >= 16 {
-            r.push(chunk);
-        }
-
-        cur = &cur[end..];
-    }
-
-    r
 }
 
 pub fn play(args: &Args, eargs: &PlayArgs) -> Result<(), crate::error::Error> {

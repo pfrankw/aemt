@@ -1,2 +1,2 @@
-pub mod adpcm;
+pub mod audio;
 pub mod hexnum;

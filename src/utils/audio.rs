@@ -1,5 +1,7 @@
 //! All of this is heavily inspired from vgmstream's PSX ADPCM decoder
 
+use memchr::memmem;
+
 // PS-ADPCM table, defined as rational numbers (as in the spec)
 const PS_ADPCM_COEFS_F: [[f32; 2]; 16] = [
     [0.0, 0.0],           // {   0.0        ,   0.0        }
@@ -116,4 +118,31 @@ pub fn decode_adpcm(
     state.adpcm_history2_32 = hist2;
 
     Ok(())
+}
+
+pub fn split_audio_pack(pack: &[u8]) -> Vec<&[u8]> {
+    let upper_delimiter = b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
+    let bottom_delimiter = b"\x00\x07\x77\x77\x77\x77\x77\x77\x77\x77\x77\x77\x77\x77\x77\x77";
+
+    let mut r = vec![];
+
+    let mut cur = &pack[0..];
+
+    while let Some(pos) = memmem::find(cur, upper_delimiter) {
+        let start = &cur[pos..];
+        let end = match memmem::find(start, bottom_delimiter) {
+            Some(pos) => pos,
+            None => start.len(),
+        };
+
+        let chunk = &start[..end];
+
+        if chunk.len() >= 16 {
+            r.push(chunk);
+        }
+
+        cur = &cur[end..];
+    }
+
+    r
 }
