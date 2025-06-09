@@ -73,6 +73,18 @@ pub struct PlayArgs {
     pub show_configs: Option<bool>
 }
 
+#[derive(Debug, Parser)]
+pub struct ExtractAudioArgs {
+    /// Index of the file that contains audio tracks
+    pub index: usize,
+
+    /// Number of the track to be extracted
+    pub track: usize,
+
+    /// Output file
+    pub output: String
+}
+
 #[derive(Debug, Subcommand)]
 pub enum Command {
     /// List files inside the KKIIDDZZ.DAT archive.
@@ -97,4 +109,11 @@ pub enum Command {
     /// Decodes ADPCM and plays the sound. Accepts the file index and the track number as
     /// parameters. As of now only works on Linux. Windows build is highly unstable.
     Play(PlayArgs),
+
+    /// Extracts ADPCM from a sound pack inside the archive.
+    /// Usually it is the file at index 10 that contains such sounds.
+    /// But there are others (that I don't know).
+    /// Since they are ADPCM they will not be playable on their own but need some header.
+    /// Use vgmstream with a txth file to play them.
+    ExtractAudio(ExtractAudioArgs),
 }
