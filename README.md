@@ -1,15 +1,20 @@
 # AEMT
 
+
+[![Actions Status](https://github.com/pfrankw/aemt/workflows/Build/badge.svg)](https://github.com/pfrankw/aemt/actions)
+
 Ape Escape Manipulation Toolkit is a handy set of tools for interacting with the KKIIDDZZ.DAT archive that's used within the game.
 
 ## Features
 
 Here are the main things you can do:
 
-- List files and offset/length via `list` command
-- Extract files via `extract` command
-- Patch files with bigger/smaller ones via `patch` command
-- Directly edit the HED file via the `hedit`
+- List files and offset/length via `list` command.
+- Extract files via `extract`.
+- Patch files with bigger/smaller ones via `patch`.
+- Directly edit the HED file via `hedit`.
+- Play audio inside sound packs via `play` command! Only working on Linux as of now.
+- Extract such audio with `extract-audio`.
 
 ## Upcoming
 
