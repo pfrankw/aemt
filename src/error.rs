@@ -8,6 +8,7 @@ pub enum Error {
     InvalidLength(String),
     InvalidNumber(String),
     Oob,
+    Other(String),
 }
 
 impl From<String> for Error {
@@ -39,6 +40,12 @@ impl From<std::io::Error> for Error {
     }
 }
 
+impl From<Box<dyn std::error::Error>> for Error {
+    fn from(value: Box<dyn std::error::Error>) -> Self {
+        Self::Other(value.to_string())
+    }
+}
+
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
@@ -59,6 +66,9 @@ impl fmt::Display for Error {
             }
             Self::Io(message) => {
                 write!(f, "I/O Error: {}", message)
+            }
+            Self::Other(message) => {
+                write!(f, "Other error: {}", message)
             }
         }
     }
