@@ -112,8 +112,6 @@ pub enum Command {
 
     /// Extracts ADPCM from a sound pack inside the archive.
     /// Usually it is the file at index 10 that contains such sounds.
-    /// But there are others (that I don't know).
-    /// Since they are ADPCM they will not be playable on their own but need some header.
     /// Use vgmstream with a txth file to play them.
     ExtractAudio(ExtractAudioArgs),
 }
