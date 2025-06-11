@@ -8,8 +8,8 @@ pub fn list(args: &Args, eargs: &ListArgs) -> Result<(), crate::error::Error> {
     let dat_len = kidz.get_archive_len(FileType::Dat, 0);
 
     println!(
-        "{:<5} {:<5} {:<10} {:<10}",
-        "No.", "Type", "Offset", "Length"
+        "{:<5} {:<5} {:<10} {:<10} {:<10}",
+        "No.", "Type", "Offset", "Length", "Metadata"
     );
 
     for (index, file) in kidz.files.iter().enumerate() {
@@ -36,11 +36,16 @@ pub fn list(args: &Args, eargs: &ListArgs) -> Result<(), crate::error::Error> {
         };
 
         println!(
-            "{:<5} {:<5} {:<10} {:<10}",
+            "{:<5} {:<5} {:<10} {:<10} {:<10}",
             index,
             file.t,
             fmt_offset,
-            fmt_len
+            fmt_len,
+            file.metadata
+                .iter()
+                .map(|item| item.1.to_string())
+                .collect::<Vec<String>>()
+                .join(", ")
         );
     }
 

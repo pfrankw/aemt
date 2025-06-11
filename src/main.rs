@@ -7,6 +7,7 @@ mod args;
 mod commands;
 mod error;
 mod kidz;
+mod metadata;
 mod utils;
 
 fn main() -> Result<(), Box<dyn Error>> {

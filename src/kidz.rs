@@ -1,9 +1,12 @@
 use std::{
     array::TryFromSliceError,
+    collections::HashMap,
     fs::File,
     io::{Read, Seek, SeekFrom, Write},
     path::Path,
 };
+
+use crate::metadata::meta::{Metadata, Msr};
 
 #[derive(Default, Clone, Copy)]
 pub struct HedEntry {
@@ -74,12 +77,14 @@ pub struct KidzFile {
     pub hed: HedEntry,
     pub data: Vec<u8>,
     pub t: FileType,
+    pub metadata: HashMap<String, Metadata>,
 }
 
 impl KidzFile {}
 
 pub struct Kidz {
     pub files: Vec<KidzFile>,
+    msr: Msr,
 }
 
 impl Kidz {
@@ -100,6 +105,7 @@ impl Kidz {
                         hed: *entry,
                         data: vec![],
                         t: FileType::Empty,
+                        metadata: HashMap::new(),
                     });
                 }
                 // Any other file is non-empty
@@ -142,12 +148,20 @@ impl Kidz {
                         hed: *entry,
                         data,
                         t: filetype,
+                        metadata: HashMap::new(),
                     });
                 }
             }
         }
 
         Ok(files)
+    }
+
+    fn scan_metadata(&mut self) {
+        for (i, file) in self.files.iter_mut().enumerate() {
+            let h = self.msr.scan(i, file);
+            file.metadata.extend(h);
+        }
     }
 
     pub fn load<P: AsRef<Path>>(directory: P) -> Result<Self, crate::error::Error> {
@@ -164,9 +178,14 @@ impl Kidz {
             buf.chunks_exact(4).map(HedEntry::try_from).collect();
         let entries = entries?;
 
-        Ok(Self {
+        let mut k = Self {
             files: Self::read_all_files(&entries, &mut dat, &mut bns)?,
-        })
+            msr: Msr::new(),
+        };
+
+        k.scan_metadata();
+
+        Ok(k)
     }
 
     pub fn get_archive_len(&self, t: FileType, dat_len: usize) -> usize {
