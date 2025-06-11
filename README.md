@@ -9,7 +9,7 @@ Ape Escape Manipulation Toolkit is a handy set of tools for interacting with the
 
 Here are the main things you can do:
 
-- List files and offset/length via `list` command.
+- List files and offset/length via `list` command. Now with extra metadata!
 - Extract files via `extract`.
 - Patch files with bigger/smaller ones via `patch`.
 - Directly edit the HED file via `hedit`.
