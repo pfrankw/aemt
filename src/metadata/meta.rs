@@ -2,12 +2,13 @@ use std::{collections::HashMap, fmt::Display};
 
 use crate::kidz::KidzFile;
 
-use super::{sound_pack, sound_pack_ptr};
+use super::{sound_pack, sound_pack_ptr, sshd};
 
 pub enum Metadata {
     Generic(String),
     SoundPack,
     SoundPackPtr,
+    Sshd,
     Str(String),
 }
 
@@ -17,6 +18,7 @@ impl Display for Metadata {
             Metadata::Generic(m) => format!("Generic: {}", m),
             Metadata::SoundPack => "Sound Pack".into(),
             Metadata::SoundPackPtr => "Sound Pack Pointers".into(),
+            Metadata::Sshd => "SShd".into(),
             Metadata::Str(name) => format!("STR Pointer: {}", name),
         };
 
@@ -63,5 +65,6 @@ impl Msr {
     fn register_all(&mut self) {
         self.register(sound_pack::Scanner {});
         self.register(sound_pack_ptr::Scanner {});
+        self.register(sshd::Scanner {});
     }
 }
