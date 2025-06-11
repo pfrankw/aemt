@@ -11,7 +11,7 @@ impl MetadataScanner for Scanner {
         "ADPCM"
     }
 
-    fn scan(&self, index: usize, file: &crate::kidz::KidzFile) -> HashMap<String, Metadata> {
+    fn scan(&self, _index: usize, file: &crate::kidz::KidzFile) -> HashMap<String, Metadata> {
         let upper_delimiter = b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
         let bottom_delimiter = b"\x00\x07\x77\x77\x77\x77\x77\x77\x77\x77\x77\x77\x77\x77\x77\x77";
 

@@ -2,10 +2,9 @@ use std::{collections::HashMap, fmt::Display};
 
 use crate::kidz::KidzFile;
 
-use super::{adpcm, sound_pack, sound_pack_ptr, sshd};
+use super::{adpcm, sound_pack, sound_pack_ptr, sshd, str};
 
 pub enum Metadata {
-    Generic(String),
     SoundPack,
     SoundPackPtr,
     Sshd,
@@ -16,7 +15,6 @@ pub enum Metadata {
 impl Display for Metadata {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let r = match self {
-            Metadata::Generic(m) => format!("Generic: {}", m),
             Metadata::SoundPack => "Sound Pack".into(),
             Metadata::SoundPackPtr => "Sound Pack Pointers".into(),
             Metadata::Sshd => "SShd".into(),
@@ -69,5 +67,6 @@ impl Msr {
         self.register(sound_pack_ptr::Scanner {});
         self.register(sshd::Scanner {});
         self.register(adpcm::Scanner {});
+        self.register(str::Scanner {});
     }
 }

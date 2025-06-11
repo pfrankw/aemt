@@ -11,7 +11,7 @@ impl MetadataScanner for Scanner {
         "SShd"
     }
 
-    fn scan(&self, index: usize, file: &crate::kidz::KidzFile) -> HashMap<String, Metadata> {
+    fn scan(&self, _index: usize, file: &crate::kidz::KidzFile) -> HashMap<String, Metadata> {
         let mut r = HashMap::new();
 
         if let Some(_pos) = memmem::find(&file.data, b"SShd") {
