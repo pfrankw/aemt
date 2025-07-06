@@ -2,6 +2,7 @@
 
 pkgs.mkShell {
   buildInputs = with pkgs; [
+    pkg-config
     # ALSA libraries
     alsa-lib
     alsa-lib.dev
